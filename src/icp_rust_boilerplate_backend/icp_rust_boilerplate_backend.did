@@ -1,0 +1,103 @@
+type Assignment = record {
+  id : nat64;
+  status : text;
+  surplus_post_id : nat64;
+  receiver_id : nat64;
+  created_at : nat64;
+  driver_id : nat64;
+};
+type AssignmentPayload = record {
+  surplus_post_id : nat64;
+  receiver_id : nat64;
+  driver_id : nat64;
+};
+type BusinessType = variant { Grocery; Bakery; Other; Restaurant };
+type DonorPayload = record {
+  name : text;
+  business_type : BusinessType;
+  email : text;
+  address : text;
+  phone_number : text;
+};
+type DonorProfile = record {
+  id : nat64;
+  name : text;
+  business_type : BusinessType;
+  created_at : nat64;
+  email : text;
+  address : text;
+  phone_number : text;
+};
+type DriverPayload = record {
+  name : text;
+  email : text;
+  address : text;
+  phone_number : text;
+};
+type DriverProfile = record {
+  id : nat64;
+  name : text;
+  created_at : nat64;
+  email : text;
+  address : text;
+  phone_number : text;
+};
+type Error = variant {
+  NotFound : record { msg : text };
+  UnAuthorized : record { msg : text };
+};
+type FoodType = variant {
+  Meat;
+  Grains;
+  Beverages;
+  Dairy;
+  Bakery;
+  Vegetables;
+  Other;
+  Fruits;
+};
+type Result = variant { Ok : Assignment; Err : text };
+type Result_1 = variant { Ok : DonorProfile; Err : text };
+type Result_2 = variant { Ok : DriverProfile; Err : text };
+type Result_3 = variant { Ok : SurplusPost; Err : text };
+type Result_4 = variant { Ok : SurplusRecord; Err : text };
+type Result_5 = variant { Ok : vec DriverProfile; Err : Error };
+type Result_6 = variant { Ok : vec SurplusPost; Err : Error };
+type SurplusPost = record {
+  id : nat64;
+  assigned : bool;
+  quantity_kg : nat32;
+  best_before_date : text;
+  donor_id : text;
+  food_type : FoodType;
+  handling_instructions : text;
+};
+type SurplusPostPayload = record {
+  quantity_kg : nat32;
+  best_before_date : text;
+  donor_id : text;
+  food_type : FoodType;
+  handling_instructions : text;
+};
+type SurplusRecord = record {
+  id : nat64;
+  surplus_post_id : nat64;
+  driver_id : nat64;
+  rating : opt nat8;
+  delivered_at : nat64;
+};
+type SurplusRecordPayload = record {
+  surplus_post_id : nat64;
+  driver_id : nat64;
+};
+service : {
+  create_assignment : (AssignmentPayload) -> (Result);
+  create_donor_profile : (DonorPayload) -> (Result_1);
+  create_driver_profile : (DriverPayload) -> (Result_2);
+  create_receiver_profile : (DriverPayload) -> (Result_2);
+  create_surplus_post : (SurplusPostPayload) -> (Result_3);
+  create_surplus_record : (SurplusRecordPayload) -> (Result_4);
+  get_all_drivers : () -> (Result_5) query;
+  get_all_surplus_posts : () -> (Result_6) query;
+  get_surplus_post_by_food_type : (FoodType) -> (Result_6) query;
+}
